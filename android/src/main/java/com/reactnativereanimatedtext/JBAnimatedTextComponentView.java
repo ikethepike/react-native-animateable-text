@@ -35,6 +35,7 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
     private @Nullable String mTextAlign;
     private int mNumberOfLines = 0;
     private float mLineHeight = Float.NaN;
+    private float mLetterSpacing = 0f;
     private @Nullable String mTextDecorationLine;
     
     private final Map<String, Object> mStyleCache = new HashMap<>();
@@ -46,11 +47,12 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
         
         // Apply default styles
         mFontSize = 14f;
+        // Set default text color to match Android's default (usually black or follows theme)
+        mColor = getCurrentTextColor();
         mNeedsStyleUpdate = true;
     }
 
     public void setText(String text) {
-        android.util.Log.d(TAG, "setText called: " + text);
         if (!TextUtils.equals(mText, text)) {
             mText = text != null ? text : "";
             mNeedsStyleUpdate = true;
@@ -59,7 +61,6 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
     }
 
     public void setColor(@Nullable Integer color) {
-        android.util.Log.d(TAG, "setColor called: " + color);
         if (!objectEquals(mColor, color)) {
             mColor = color;
             mStyleCache.put("color", color);
@@ -69,7 +70,6 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
     }
 
     public void setFontSize(float fontSize) {
-        android.util.Log.d(TAG, "setFontSize called: " + fontSize);
         if (mFontSize != fontSize) {
             mFontSize = fontSize;
             mStyleCache.put("fontSize", fontSize);
@@ -79,7 +79,6 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
     }
 
     public void setFontFamily(@Nullable String fontFamily) {
-        android.util.Log.d(TAG, "setFontFamily called: " + fontFamily);
         if (!TextUtils.equals(mFontFamily, fontFamily)) {
             mFontFamily = fontFamily;
             mStyleCache.put("fontFamily", fontFamily);
@@ -89,7 +88,6 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
     }
 
     public void setFontWeight(@Nullable String fontWeight) {
-        android.util.Log.d(TAG, "setFontWeight called: " + fontWeight);
         if (!TextUtils.equals(mFontWeight, fontWeight)) {
             mFontWeight = fontWeight;
             mStyleCache.put("fontWeight", fontWeight);
@@ -99,7 +97,6 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
     }
 
     public void setFontStyle(@Nullable String fontStyle) {
-        android.util.Log.d(TAG, "setFontStyle called: " + fontStyle);
         if (!TextUtils.equals(mFontStyle, fontStyle)) {
             mFontStyle = fontStyle;
             mStyleCache.put("fontStyle", fontStyle);
@@ -109,7 +106,6 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
     }
 
     public void setTextAlign(@Nullable String textAlign) {
-        android.util.Log.d(TAG, "setTextAlign called: " + textAlign);
         if (!TextUtils.equals(mTextAlign, textAlign)) {
             mTextAlign = textAlign;
             applyTextAlign();
@@ -117,7 +113,6 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
     }
 
     public void setNumberOfLines(int numberOfLines) {
-        android.util.Log.d(TAG, "setNumberOfLines called: " + numberOfLines);
         if (mNumberOfLines != numberOfLines) {
             mNumberOfLines = numberOfLines;
             applyNumberOfLines();
@@ -125,7 +120,6 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
     }
 
     public void setLineHeight(float lineHeight) {
-        android.util.Log.d(TAG, "setLineHeight called: " + lineHeight);
         if (mLineHeight != lineHeight) {
             mLineHeight = lineHeight;
             applyLineHeight();
@@ -133,10 +127,18 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
     }
 
     public void setTextDecorationLine(@Nullable String textDecorationLine) {
-        android.util.Log.d(TAG, "setTextDecorationLine called: " + textDecorationLine);
         if (!TextUtils.equals(mTextDecorationLine, textDecorationLine)) {
             mTextDecorationLine = textDecorationLine;
             mStyleCache.put("textDecorationLine", textDecorationLine);
+            mNeedsStyleUpdate = true;
+            updateTextWithStyles();
+        }
+    }
+
+    public void setLetterSpacing(float letterSpacing) {
+        if (mLetterSpacing != letterSpacing) {
+            mLetterSpacing = letterSpacing;
+            mStyleCache.put("letterSpacing", letterSpacing);
             mNeedsStyleUpdate = true;
             updateTextWithStyles();
         }
@@ -152,10 +154,9 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
             return;
         }
 
-        android.util.Log.d(TAG, "updateTextWithStyles - text: " + mText + ", color: " + mColor + ", fontSize: " + mFontSize + ", fontWeight: " + mFontWeight + ", fontStyle: " + mFontStyle);
-
-        SpannableStringBuilder spannable = new SpannableStringBuilder(mText);
-        int length = spannable.length();
+        try {
+            SpannableStringBuilder spannable = new SpannableStringBuilder(mText);
+            int length = spannable.length();
 
         if (mColor != null) {
             spannable.setSpan(
@@ -202,12 +203,20 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
             }
         }
 
-        if (mTextDecorationLine != null) {
-            applyTextDecoration(spannable, mTextDecorationLine, length);
-        }
+            if (mTextDecorationLine != null) {
+                applyTextDecoration(spannable, mTextDecorationLine, length);
+            }
 
-        super.setText(spannable, BufferType.SPANNABLE);
-        mNeedsStyleUpdate = false;
+            super.setText(spannable, BufferType.SPANNABLE);
+            mNeedsStyleUpdate = false;
+            
+            // Apply letter spacing after setting text since it's not part of the spannable
+            applyLetterSpacing();
+        } catch (Exception e) {
+            // Fallback to plain text if styling fails
+            super.setText(mText, BufferType.NORMAL);
+            mNeedsStyleUpdate = false;
+        }
     }
 
     private void applyTextAlign() {
@@ -255,6 +264,23 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
             float lineHeightPx = PixelUtil.toPixelFromDIP(mLineHeight);
             float currentTextSize = getTextSize();
             setLineSpacing(lineHeightPx - currentTextSize, 1.0f);
+        }
+    }
+
+    private void applyLetterSpacing() {
+        // Convert from DP to EM units (Android uses EM for letter spacing)
+        // React Native uses DP, so we need to convert to pixels first
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            // Convert letter spacing from DP to pixels
+            float letterSpacingPx = PixelUtil.toPixelFromDIP(mLetterSpacing);
+            // Get the actual text size in pixels (getTextSize() returns pixels)
+            float textSizePx = getTextSize();
+            
+            if (textSizePx > 0) {
+                // Calculate EM value: letter spacing in pixels / text size in pixels
+                float letterSpacingEm = letterSpacingPx / textSizePx;
+                super.setLetterSpacing(letterSpacingEm);
+            }
         }
     }
 
@@ -310,6 +336,7 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
         applyTextAlign();
         applyNumberOfLines();
         applyLineHeight();
+        applyLetterSpacing();
     }
 
     private static class CustomTypefaceSpan extends android.text.style.MetricAffectingSpan {

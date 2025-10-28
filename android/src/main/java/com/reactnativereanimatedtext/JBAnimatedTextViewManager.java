@@ -74,4 +74,9 @@ public class JBAnimatedTextViewManager extends SimpleViewManager<JBAnimatedTextC
   public void setTextDecorationLine(JBAnimatedTextComponentView view, @Nullable String textDecorationLine) {
     view.setTextDecorationLine(textDecorationLine);
   }
+
+  @ReactProp(name = "letterSpacing", defaultFloat = 0f)
+  public void setLetterSpacing(JBAnimatedTextComponentView view, float letterSpacing) {
+    view.setLetterSpacing(letterSpacing);
+  }
 }

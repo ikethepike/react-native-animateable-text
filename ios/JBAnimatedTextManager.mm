@@ -36,9 +36,16 @@ RCT_REMAP_SHADOW_PROPERTY(ellipsizeMode, lineBreakMode, NSLineBreakMode)
 RCT_REMAP_SHADOW_PROPERTY(adjustsFontSizeToFit, adjustsFontSizeToFit, BOOL)
 RCT_REMAP_SHADOW_PROPERTY(minimumFontScale, minimumFontScale, CGFloat)
 
-// ADDED
-RCT_REMAP_SHADOW_PROPERTY(text, text, NSString)
-// END ADDED
+RCT_EXPORT_SHADOW_PROPERTY(text, NSString)
+RCT_EXPORT_SHADOW_PROPERTY(color, UIColor)
+RCT_EXPORT_SHADOW_PROPERTY(fontSize, CGFloat)
+RCT_EXPORT_SHADOW_PROPERTY(fontFamily, NSString)
+RCT_EXPORT_SHADOW_PROPERTY(fontWeight, NSString)
+RCT_EXPORT_SHADOW_PROPERTY(fontStyle, NSString)
+RCT_EXPORT_SHADOW_PROPERTY(textAlign, NSString)
+RCT_EXPORT_SHADOW_PROPERTY(lineHeight, CGFloat)
+RCT_EXPORT_SHADOW_PROPERTY(letterSpacing, CGFloat)
+RCT_EXPORT_SHADOW_PROPERTY(textDecorationLine, NSString)
 
 RCT_EXPORT_SHADOW_PROPERTY(onTextLayout, RCTDirectEventBlock)
 
@@ -65,15 +72,10 @@ RCT_EXPORT_VIEW_PROPERTY(selectable, BOOL)
 
 - (RCTShadowView *)shadowView
 {
-  NSLog(@"Creating JBTextShadowView with bridge");
-
-  // ADDED - REPLACED
   JBTextShadowView *shadowView = [[JBTextShadowView alloc] initWithBridge:self.bridge];
-  // END ADDED - REPLACED
   shadowView.textAttributes.fontSizeMultiplier =
       [[[self.bridge moduleForName:@"AccessibilityManager"] valueForKey:@"multiplier"] floatValue];
   [_shadowViews addObject:shadowView];
-  NSLog(@"Created and added JBTextShadowView to shadow views collection");
   return shadowView;
 }
 

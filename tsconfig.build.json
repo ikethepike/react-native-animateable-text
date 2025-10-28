@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
     "rootDir": ".",
-    "paths": {
-      "react-native-animateable-text": ["./src/index"]
-    },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
@@ -22,5 +19,6 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext"
-  }
+  },
+  "exclude": ["example", "node_modules"]
 }

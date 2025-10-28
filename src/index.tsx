@@ -1,7 +1,7 @@
 import Animated from 'react-native-reanimated';
 import { AnimateableText as RawAnimateableText } from './AnimateableText';
 
-Animated.addWhitelistedNativeProps({ 
+Animated.addWhitelistedNativeProps({
   text: true,
   color: true,
   fontSize: true,
@@ -11,9 +11,12 @@ Animated.addWhitelistedNativeProps({
   textAlign: true,
   numberOfLines: true,
   lineHeight: true,
+  letterSpacing: true,
   textDecorationLine: true,
 });
 
-const AnimateableText = Animated.createAnimatedComponent(RawAnimateableText);
+const AnimateableText: ReturnType<
+  typeof Animated.createAnimatedComponent<typeof RawAnimateableText>
+> = Animated.createAnimatedComponent(RawAnimateableText);
 
 export default AnimateableText;
