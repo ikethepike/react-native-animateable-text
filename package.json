@@ -14,6 +14,7 @@
     "ios",
     "cpp",
     "react-native-animateable-text.podspec",
+    "tsconfig.build.json",
     "!lib/typescript/example",
     "!**/__tests__",
     "!**/__fixtures__",
