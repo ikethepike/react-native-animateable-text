@@ -63,14 +63,14 @@
     "prettier": "^2.0.5",
     "react-native": "0.76.0",
     "react-native-builder-bob": "^0.20.0",
-    "react-native-reanimated": "~3.16.1",
+    "react-native-reanimated": "^3.16.7",
     "release-it": "^15.0.0",
     "typescript": "^5.0.2"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": ">=0.74.0",
-    "react-native-reanimated": ">=3"
+    "react-native-reanimated": ">=4"
   },
   "jest": {
     "preset": "react-native",
