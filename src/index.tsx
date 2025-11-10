@@ -1,5 +1,9 @@
 import Animated from 'react-native-reanimated';
+import type { AnimatedProps } from 'react-native-reanimated';
+import type { ForwardRefExoticComponent, RefAttributes } from 'react';
 import { AnimateableText as RawAnimateableText } from './AnimateableText';
+import type { AnimateableTextProps } from './TextProps';
+import type { Text as IText } from 'react-native';
 
 Animated.addWhitelistedNativeProps({
   text: true,
@@ -15,8 +19,13 @@ Animated.addWhitelistedNativeProps({
   textDecorationLine: true,
 });
 
-const AnimateableText: ReturnType<
-  typeof Animated.createAnimatedComponent<typeof RawAnimateableText>
-> = Animated.createAnimatedComponent(RawAnimateableText);
+const AnimateableTextComponent = Animated.createAnimatedComponent(RawAnimateableText);
+
+// Cast to properly typed component that supports animatedProps with text
+const AnimateableText = AnimateableTextComponent as ForwardRefExoticComponent<
+  AnimatedProps<AnimateableTextProps & RefAttributes<IText>> & {
+    animatedProps?: Partial<{ text: string }>;
+  }
+>;
 
 export default AnimateableText;
