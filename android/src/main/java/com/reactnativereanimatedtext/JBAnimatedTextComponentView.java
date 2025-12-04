@@ -168,7 +168,7 @@ public class JBAnimatedTextComponentView extends AppCompatTextView {
         }
 
         spannable.setSpan(
-            new AbsoluteSizeSpan((int) PixelUtil.toPixelFromDIP(mFontSize)),
+            new AbsoluteSizeSpan((int) PixelUtil.toPixelFromSP(mFontSize)),
             0,
             length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
