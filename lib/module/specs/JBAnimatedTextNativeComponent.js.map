@@ -1,1 +1,1 @@
-{"version":3,"names":["codegenNativeComponent"],"sourceRoot":"../../../src","sources":["specs/JBAnimatedTextNativeComponent.tsx"],"mappings":"AAAA;AACA;AACA;;AAEA,OAAOA,sBAAsB,MAAM,yDAAyD;AAO5F,eAAeA,sBAAsB,CAAc,gBAAgB,CAAC","ignoreList":[]}
+{"version":3,"names":["codegenNativeComponent"],"sourceRoot":"../../../src","sources":["specs/JBAnimatedTextNativeComponent.js"],"mappings":"AAAA;AACA;AACA;AACA,OAAOA,sBAAsB,MAAM,yDAAyD;AAC5F,eAAeA,sBAAsB,CAAC,gBAAgB,CAAC","ignoreList":[]}
